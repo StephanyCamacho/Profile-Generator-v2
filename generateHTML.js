@@ -1,3 +1,4 @@
+// console.log(data);
 const colors = {
   green: {
     wrapperBackground: "#E6E1C3",
@@ -177,28 +178,28 @@ function generateHTML(data) {
       <header>
       <div class="wrapper">
         <div class="photo-header">
-          <img src="${data.portPic}"><br>
+          <img src="${data.avatar_url}"><br>
           <h1>Hi!</h1>
-          <h2>My name is ${data.name}</h2>
-          <h3>Currently @ ${data.company}</h3>
+          <h2>My name is ${data.login}</h2>
+          <h3>Currently @ ${data.company ? data.company: "Workplace"}</h3>
       <nav class="links-nav">
         <a class="nav-link" href="https://www.google.com/maps/place/${data.location.split(' ')[0]}+${data.location.split(' ')[1]}">${data.location}</a>
         <a class="nav-link" href="https://github.com/${data.username}">github</a>
-        <a class="nav-link" href="${data.blog}">blog</a>
+        <a class="nav-link" href="${data.blog ? data.blog : ""}">blog</a>
       </nav>
       </header>
 
       <div class="container">
       <div class="row">
       <div class="col">
-      <h4>${data.bio}</h4>
+      <h4>${data.bio ? data.bio : ""}</h4>
       </div>
       </div>
 
       <div class="row">
       <dive class="col card">
       <h2>Public repositories: </h1>
-      ${data.numOfRepo}
+      ${data.public_repos}
       </div>
 
       <div class="col card">
@@ -215,7 +216,7 @@ function generateHTML(data) {
 
       <div class="card col">
       <h2>Following:</h2>
-      ${data.followers}
+      ${data.following}
       </div>
       </div>
       </div>

@@ -1,16 +1,15 @@
-// Hi Stephany
 
 const fs = require("fs");
+const path = require("path");
+const open = require("open");
 const axios = require('axios');
 const inquirer = require('inquirer');
 const convertFactory = require('electron-html-to');
-const { generateHTML } = require("./generateHTML")
+const { generateHTML } = require("./generateHTML");
 
 var conversion = convertFactory({
     converterPath: convertFactory.converters.PDF
 });
-
-let data = {};
 
 const questions = [
     {
@@ -28,6 +27,7 @@ const questions = [
 ];
 
 // function writeToFile(fileName, data) {
+//     return fs.writeFileSync(path.join(process.cwd(), filename),data)
 //     //create index.html file using fs
 
 // }
@@ -41,41 +41,33 @@ function init() {
             axios
                 .get(queryUrl)
                 .then((response) => {
-                    console.log(response.data)
-                    switch (color) {
-                        case 'green':
-                            data.color = 0;
-                            break;
-                        case 'blue':
-                            data.color = 1;
-                            break;
-                        case 'pink':
-                            data.color = 2;
-                            break;
-                        case 'red':
-                            data.color = 3;
-                            break;
-                    }
 
-                    axios
-                        .get(`https://api.github.com/users/${username}/repos?per_page=100`)
-                        .then((response) => {
-                            data.stars = 0;
-                            for (let i = 0; i < response.data.length; i++) {
-                                data.stars += response.data[i].stargazers_count;
+
+                    // axios
+                    //     .get(`https://api.github.com/users/${username}/repos?per_page=100`)
+                    //     .then((response) => {
+                            let info = response.data;
+                            info.color = color;
+                            info.stars = 0;
+                            for (let i = 0; i < info.length; i++) {
+                                info.stars += info[i].stars_count;
                             }
-                            let resumeHTML = generateHTML(data);
+                            if (!info.location){
+                                info.location = "No location listed";
+                            }
+                            let resumeHTML = generateHTML(info);
                             conversion({ html: resumeHTML }, function (err, result) {
                                 if (err) {
                                     return console.error(err);
                                 }
-                                console.log(result.numberOfPages);
-                                console.log(result.logs);
-                                result.stream.pipe(fs.createWriteStream('github.pdf'));
+                                // console.log(result.numberOfPages);
+                                // console.log(result.logs);
+                                result.stream.pipe(fs.createWriteStream(path.join(__dirname,'github.pdf')));
                                 conversion.kill();
                             })
-                        })
-                });
+                            // })
+                            open(path.join(process.cwd(), "github.pdf"));
+                        });
         })
 }
 init();
